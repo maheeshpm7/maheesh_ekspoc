@@ -15,21 +15,11 @@ resource "aws_internet_gateway" "cloud-native_gw" {
   }
 }
 
-
-data "aws_availability_zones" "available" {
-}
-
-
-resource "random_shuffle" "az_list" {
-  input        = data.aws_availability_zones.available.names
-  result_count = 2
-}
-
 resource "aws_subnet" "public_cloud-native_subnet" {
   count                   = var.public_sn_count
   vpc_id                  = aws_vpc.cloud-native.id
   cidr_block              = var.public_cidrs[count.index]
-  availability_zone       = random_shuffle.az_list.result[count.index]
+  availability_zone       = element(var.availability_zone, count.index)
   map_public_ip_on_launch = var.map_public_ip_on_launch
   tags = {
     Name = var.tags
@@ -53,11 +43,11 @@ resource "aws_nat_gateway" "cloud-native_nat" {
 
 }
 
-resource "aws_subnet" "private_cloud-native_subnet" {
+resource "aws_subnet" "private_cloudnative_subnet" {
   count             = var.private_sn_count
   vpc_id            = aws_vpc.cloud-native.id
   cidr_block        = var.private_cidrs[count.index]
-  availability_zone = random_shuffle.az_list.result[count.index]
+  availability_zone = element(var.availability_zone, count.index)
   tags = {
     Name = var.tags2
   }
@@ -93,6 +83,6 @@ resource "aws_route_table_association" "public" {
 
 resource "aws_route_table_association" "private" {
   count          = var.private_sn_count
-  subnet_id      = aws_subnet.private_cloud-native_subnet[count.index].id
+  subnet_id      = aws_subnet.private_cloudnative_subnet[count.index].id
   route_table_id = aws_route_table.internal_cloud-native_private.id
 }
