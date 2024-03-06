@@ -1,6 +1,7 @@
 # modules/eks/variables.tf
 
-variable "aws_public_subnet" {
+variable "aws_private_subnet_ids" {
+  type = list(string)
   description = "The public subnet ID where the EKS cluster will be deployed."
 }
 
