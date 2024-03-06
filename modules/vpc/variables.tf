@@ -3,7 +3,7 @@
 variable "vpc_cidr" {}
 variable "access_ip" {}
 variable "public_sn_count" {}
-variable "public_sn_count" {}
+variable "private_sn_count" {}
 variable "public_cidrs" {
   type = list(any)
 }
@@ -12,6 +12,9 @@ variable "private_cidrs" {
 }
 variable "instance_tenancy" {
 
+}
+variable "availability_zone" {
+  type = list(string)
 }
 variable "tags" {
 
