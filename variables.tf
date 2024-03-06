@@ -38,6 +38,10 @@ variable "image_tag_mutability" {
   description = "The tag mutability setting for the repository. Must be one of: `MUTABLE` or `IMMUTABLE`"
 }
 
+variable "availability_zone" {
+  type = list(string)
+}
+
 variable "repository_names" {
   description = "List of names for the ECR repositories"
   type        = list
