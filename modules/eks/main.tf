@@ -1,9 +1,9 @@
-resource "aws_eks_cluster" "cloud-native" {
+resource "aws_eks_cluster" "cloudnative" {
   name     = var.cluster_name
   role_arn = aws_iam_role.cloud-native.arn
 
   vpc_config {
-    subnet_ids              = var.aws_public_subnet
+    subnet_ids              = var.aws_private_subnet_ids
     endpoint_public_access  = var.endpoint_public_access
     endpoint_private_access = var.endpoint_private_access
     public_access_cidrs     = var.public_access_cidrs
@@ -11,16 +11,16 @@ resource "aws_eks_cluster" "cloud-native" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.cloud-native-AmazonEKSClusterPolicy,
-    aws_iam_role_policy_attachment.cloud-native-AmazonEKSVPCResourceController,
+    aws_iam_role_policy_attachment.cloudnative-AmazonEKSClusterPolicy,
+    aws_iam_role_policy_attachment.cloudnative-AmazonEKSVPCResourceController,
   ]
 }
 
-resource "aws_eks_node_group" "cloud-native" {
-  cluster_name    = aws_eks_cluster.cloud-native.name
+resource "aws_eks_node_group" "cloudnative" {
+  cluster_name    = aws_eks_cluster.cloudnative.name
   node_group_name = var.node_group_name
-  node_role_arn   = aws_iam_role.cloud-native2.arn
-  subnet_ids      = var.aws_public_subnet
+  node_role_arn   = aws_iam_role.cloudnative2.arn
+  subnet_ids      = var.aws_private_subnet_ids
   instance_types  = var.instance_types
 
   remote_access {
@@ -35,9 +35,9 @@ resource "aws_eks_node_group" "cloud-native" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.cloud-native-AmazonEKSWorkerNodePolicy,
-    aws_iam_role_policy_attachment.cloud-native-AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.cloud-native-AmazonEC2ContainerRegistryReadOnly,
+    aws_iam_role_policy_attachment.cloudnative-AmazonEKSWorkerNodePolicy,
+    aws_iam_role_policy_attachment.cloudnative-AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.cloudnative-AmazonEC2ContainerRegistryReadOnly,
   ]
 }
 
@@ -121,15 +121,15 @@ resource "aws_iam_role" "cloudnative2" {
 
 resource "aws_iam_role_policy_attachment" "cloudnative-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-  role       = aws_iam_role.cloud-native2.name
+  role       = aws_iam_role.cloudnative2.name
 }
 
 resource "aws_iam_role_policy_attachment" "cloudnative-AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-  role       = aws_iam_role.cloud-native2.name
+  role       = aws_iam_role.cloudnative2.name
 }
 
 resource "aws_iam_role_policy_attachment" "cloudnative-AmazonEC2ContainerRegistryReadOnly" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-  role       = aws_iam_role.cloud-native2.name
+  role       = aws_iam_role.cloudnative2.name
 }
